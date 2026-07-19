@@ -1,0 +1,12 @@
+{
+  "name": "videoai-music",
+  "version": "1.0.0",
+  "description": "AI Music Video Generator - Crea videos musicales con inteligencia artificial",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "replicate": "^1.0.0"
+  }
+}

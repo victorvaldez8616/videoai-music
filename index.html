@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Music Video Generator - Crea Videos Musicales Gratis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@4.5.15/index.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+            min-height: 100vh;
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5),
+                        0 0 40px rgba(139, 92, 246, 0.3),
+                        0 0 60px rgba(139, 92, 246, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4, #8b5cf6);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            transition: width 0.3s ease;
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .music-note {
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(5deg); }
+            75% { transform: translateY(-5px) rotate(-5deg); }
+        }
+        
+        .video-preview {
+            background: linear-gradient(135deg, #1f1f3e 0%, #2d2d5a 100%);
+        }
+        
+        .style-option {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .style-option.selected {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.2);
+        }
+        
+        .duration-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            cursor: pointer;
+        }
+        
+        .duration-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            cursor: pointer;
+            border: none;
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .feature-icon {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">VideoAI Music</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#inicio" class="hover:text-purple-400 transition-colors">Inicio</a>
+                    <a href="#crear" class="hover:text-purple-400 transition-colors">Crear</a>
+                    <a href="#plantillas" class="hover:text-purple-400 transition-colors">Plantillas</a>
+                    <a href="#precios" class="hover:text-purple-400 transition-colors">Precios</a>
+                    <button class="btn-primary px-6 py-2 rounded-full font-semibold">
+                        Comenzar Gratis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                    Crea Videos Musicales con
+                    <span class="gradient-text">IA Gratis</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    Transforma tu música en clips visuales profesionales usando inteligencia artificial. 
+                    Genera clips de hasta 16 segundos con calidad cinematográfica.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="scrollToCreate()" class="btn-primary px-8 py-4 rounded-full font-semibold text-lg neon-glow">
+                        🎬 Crear Video Ahora
+                    </button>
+                    <button class="px-8 py-4 rounded-full font-semibold text-lg border-2 border-purple-500 hover:bg-purple-500/20 transition-all">
+                        ▶️ Ver Demo
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Hero Image -->
+            <div class="relative max-w-4xl mx-auto">
+                <img src="https://image.qwenlm.ai/public_source/6388f18f-b856-47a0-9392-df9af2c392a8/168965ea2-7570-40ef-b598-4b225616b181.png" 
+                     alt="AI Music Video Generator" 
+                     class="w-full rounded-2xl neon-glow floating">
+                <div class="absolute -top-4 -right-4 w-20 h-20 bg-purple-500/30 rounded-full pulse-ring"></div>
+                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-cyan-500/30 rounded-full pulse-ring" style="animation-delay: 1s;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16">
+                ¿Por qué elegir <span class="gradient-text">VideoAI Music</span>?
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">🎵</div>
+                    <h3 class="text-2xl font-semibold mb-3">Clips de Hasta 16s</h3>
+                    <p class="text-gray-400">Genera clips visuales de hasta 16 segundos por cada generación. Perfecto para crear contenido visual para tu música.</p>
+                </div>
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">✨</div>
+                    <h3 class="text-2xl font-semibold mb-3">100% Gratis</h3>
+                    <p class="text-gray-400">Sin costos ocultos, sin suscripciones. Todo el poder de la IA al alcance de todos.</p>
+                </div>
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">🎨</div>
+                    <h3 class="text-2xl font-semibold mb-3">Estilos Únicos</h3>
+                    <p class="text-gray-400">Múltiples estilos visuales: cinematográfico, anime, surrealista, neón, y más.</p>
+                </div>
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h3 class="text-2xl font-semibold mb-3">Rápido y Fácil</h3>
+                    <p class="text-gray-400">Sube tu canción, describe tu visión y obtén tu video en minutos.</p>
+                </div>
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">📱</div>
+                    <h3 class="text-2xl font-semibold mb-3">Sin Marca de Agua</h3>
+                    <p class="text-gray-400">Videos limpios y profesionales, listos para compartir en cualquier plataforma.</p>
+                </div>
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <div class="text-5xl mb-4">🌐</div>
+                    <h3 class="text-2xl font-semibold mb-3">Exportación HD</h3>
+                    <p class="text-gray-400">Descarga en 1080p o 4K. Compatible con YouTube, TikTok, Instagram y más.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Creator Section -->
+    <section id="crear" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                Crea Tu <span class="gradient-text">Video Musical</span>
+            </h2>
+            <p class="text-center text-gray-400 mb-12">Sigue estos simples pasos y tendrás tu video listo</p>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left Panel - Input -->
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-semibold mb-6">📝 Configura Tu Video</h3>
+                    
+                    <!-- Song Upload -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">1. Sube Tu Canción</label>
+                        <div class="border-2 border-dashed border-purple-500/50 rounded-xl p-8 text-center hover:border-purple-500 transition-colors cursor-pointer" id="dropZone">
+                            <input type="file" id="audioFile" accept="audio/*" class="hidden">
+                            <div class="text-4xl mb-2">🎵</div>
+                            <p class="text-gray-400">Arrastra tu archivo o haz clic para subir</p>
+                            <p class="text-sm text-gray-500 mt-2">MP3, WAV, AAC (Máx 50MB)</p>
+                        </div>
+                        <div id="fileInfo" class="hidden mt-3 p-3 bg-purple-500/20 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <span id="fileName" class="text-sm"></span>
+                                <span id="fileDuration" class="text-sm text-purple-400"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Video Prompt -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">2. Describe Tu Video</label>
+                        <textarea id="videoPrompt" rows="4" 
+                                  class="w-full bg-black/30 border border-white/20 rounded-xl p-4 focus:border-purple-500 focus:outline-none transition-colors"
+                                  placeholder="Ej: Un artista caminando por una calle nocturna con luces de neón, burbujas flotando, atmósfera melancólica y soñadora..."></textarea>
+                    </div>
+                    
+                    <!-- Style Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">3. Elige El Estilo Visual</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="style-option selected bg-white/5 rounded-xl p-4 cursor-pointer text-center" data-style="cinematic">
+                                <div class="text-2xl mb-1">🎬</div>
+                                <div class="text-sm">Cinematográfico</div>
+                            </div>
+                            <div class="style-option bg-white/5 rounded-xl p-4 cursor-pointer text-center" data-style="neon">
+                                <div class="text-2xl mb-1">💜</div>
+                                <div class="text-sm">Neón</div>
+                            </div>
+                            <div class="style-option bg-white/5 rounded-xl p-4 cursor-pointer text-center" data-style="anime">
+                                <div class="text-2xl mb-1">🎌</div>
+                                <div class="text-sm">Anime</div>
+                            </div>
+                            <div class="style-option bg-white/5 rounded-xl p-4 cursor-pointer text-center" data-style="surreal">
+                                <div class="text-2xl mb-1">🌀</div>
+                                <div class="text-sm">Surrealista</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Duration Slider -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">
+                            4. Duración del Video: <span id="durationValue" class="text-purple-400">5s</span>
+                        </label>
+                        <input type="range" id="durationSlider" class="duration-slider w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer" 
+                               min="1" max="16" value="5" step="1">
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>1s</span>
+                            <span>4s</span>
+                            <span>8s</span>
+                            <span>12s</span>
+                            <span>16s</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Button -->
+                    <button id="generateBtn" onclick="generateVideo()" class="w-full btn-primary py-4 rounded-xl font-semibold text-lg neon-glow">
+                        🚀 Generar Video con IA
+                    </button>
+                </div>
+                
+                <!-- Right Panel - Preview -->
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-semibold mb-6">🎬 Vista Previa</h3>
+                    
+                    <div id="previewContainer" class="video-preview rounded-xl overflow-hidden aspect-video relative">
+                        <div id="placeholderPreview" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-6xl mb-4 music-note">🎵</div>
+                                <p class="text-gray-400">Tu video aparecerá aquí</p>
+                                <p class="text-sm text-gray-500 mt-2">Después de generar</p>
+                            </div>
+                        </div>
+                        
+                        <div id="loadingPreview" class="hidden absolute inset-0 flex items-center justify-center bg-black/80">
+                            <div class="text-center">
+                                <div class="loading-spinner mx-auto mb-4"></div>
+                                <p class="text-lg">Generando tu video...</p>
+                                <p id="loadingProgress" class="text-purple-400 mt-2">0%</p>
+                                <div class="w-64 h-2 bg-white/20 rounded-full mt-4 mx-auto overflow-hidden">
+                                    <div id="progressBar" class="progress-bar h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="videoPreview" class="hidden absolute inset-0">
+                            <video id="previewVideo" class="w-full h-full object-cover" controls loop>
+                                <source src="" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                    
+                    <!-- Video Info -->
+                    <div id="videoInfo" class="hidden mt-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Estado:</span>
+                            <span class="text-green-400">✓ Completado</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Duración:</span>
+                            <span id="outputDuration" class="text-white">4:00</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Resolución:</span>
+                            <span class="text-white">960x540 (540p)</span>
+                        </div>
+                        
+                        <div class="flex gap-3 pt-4">
+                            <button onclick="downloadVideo()" class="flex-1 btn-primary py-3 rounded-xl font-semibold">
+                                📥 Descargar
+                            </button>
+                            <button onclick="shareVideo()" class="flex-1 py-3 rounded-xl font-semibold border-2 border-purple-500 hover:bg-purple-500/20 transition-all">
+                                🔗 Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Templates Section -->
+    <section id="plantillas" class="py-20 px-4 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                Plantillas <span class="gradient-text">Populares</span>
+            </h2>
+            <p class="text-center text-gray-400 mb-12">Inspírate con nuestros estilos más usados</p>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="card-hover bg-white/5 rounded-xl overflow-hidden border border-white/10 cursor-pointer">
+                    <div class="aspect-video bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                        <span class="text-4xl">🌃</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">Ciudad Nocturna</h4>
+                        <p class="text-sm text-gray-400">Neón y calles vacías</p>
+                    </div>
+                </div>
+                <div class="card-hover bg-white/5 rounded-xl overflow-hidden border border-white/10 cursor-pointer">
+                    <div class="aspect-video bg-gradient-to-br from-pink-600 to-orange-600 flex items-center justify-center">
+                        <span class="text-4xl">🌅</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">Atardecer Onírico</h4>
+                        <p class="text-sm text-gray-400">Colores cálidos y suaves</p>
+                    </div>
+                </div>
+                <div class="card-hover bg-white/5 rounded-xl overflow-hidden border border-white/10 cursor-pointer">
+                    <div class="aspect-video bg-gradient-to-br from-cyan-600 to-purple-600 flex items-center justify-center">
+                        <span class="text-4xl">🌀</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">Sueño Abstracto</h4>
+                        <p class="text-sm text-gray-400">Formas y colores flotantes</p>
+                    </div>
+                </div>
+                <div class="card-hover bg-white/5 rounded-xl overflow-hidden border border-white/10 cursor-pointer">
+                    <div class="aspect-video bg-gradient-to-br from-green-600 to-blue-600 flex items-center justify-center">
+                        <span class="text-4xl">🌊</span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">Océano Profundo</h4>
+                        <p class="text-sm text-gray-400">Burbujas y profundidad</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="precios" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                Planes <span class="gradient-text">y Precios</span>
+            </h2>
+            <p class="text-center text-gray-400 mb-12">Comienza gratis, actualiza cuando necesites más</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-2">Gratis</h3>
+                    <p class="text-gray-400 mb-6">Para empezar</p>
+                    <div class="text-4xl font-bold mb-6">$0<span class="text-lg text-gray-400">/mes</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Hasta 4 minutos por video</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>5 videos al mes</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Calidad HD 1080p</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Sin marca de agua</span>
+                        </li>
+                        <li class="flex items-center text-gray-500">
+                            <span class="mr-2">✗</span>
+                            <span>Exportación 4K</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 rounded-xl font-semibold border-2 border-purple-500 hover:bg-purple-500/20 transition-all">
+                        Comenzar Gratis
+                    </button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="card-hover bg-gradient-to-b from-purple-600/20 to-cyan-600/20 rounded-2xl p-8 border-2 border-purple-500 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-cyan-500 px-4 py-1 rounded-full text-sm font-semibold">
+                        Más Popular
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                    <p class="text-gray-400 mb-6">Para creadores</p>
+                    <div class="text-4xl font-bold mb-6">$9.99<span class="text-lg text-gray-400">/mes</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Videos ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Hasta 10 minutos por video</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Calidad 4K Ultra HD</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Estilos premium</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Soporte prioritario</span>
+                        </li>
+                    </ul>
+                    <button class="w-full btn-primary py-3 rounded-xl font-semibold neon-glow">
+                        Suscribirse Pro
+                    </button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="card-hover bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold mb-2">Empresa</h3>
+                    <p class="text-gray-400 mb-6">Para estudios</p>
+                    <div class="text-4xl font-bold mb-6">$49.99<span class="text-lg text-gray-400">/mes</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Todo lo de Pro</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Videos hasta 30 minutos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>API access</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Marca blanca</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-400 mr-2">✓</span>
+                            <span>Soporte 24/7</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 rounded-xl font-semibold border-2 border-purple-500 hover:bg-purple-500/20 transition-all">
+                        Contactar Ventas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 px-4 bg-black/20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">
+                Preguntas <span class="gradient-text">Frecuentes</span>
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="font-semibold mb-2">¿Realmente es 100% gratis?</h4>
+                    <p class="text-gray-400">Sí, nuestro plan gratuito te permite crear hasta 5 videos de 4 minutos al mes sin ningún costo. Sin marcas de agua ni limitaciones ocultas.</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="font-semibold mb-2">¿Qué formatos de audio aceptan?</h4>
+                    <p class="text-gray-400">Aceptamos MP3, WAV, AAC, FLAC y OGG. El tamaño máximo por archivo es de 50MB.</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="font-semibold mb-2">¿Cuánto tiempo tarda en generarse un video?</h4>
+                    <p class="text-gray-400">Un clip de 5 segundos toma aproximadamente 30-60 segundos en generarse. Clips más largos pueden tardar hasta 3 minutos.</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="font-semibold mb-2">¿Puedo usar los videos comercialmente?</h4>
+                    <p class="text-gray-400">Sí, todos los videos generados son de tu propiedad y puedes usarlos para fines comerciales sin restricciones.</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="font-semibold mb-2">¿Qué resoluciones están disponibles?</h4>
+                    <p class="text-gray-400">El plan gratis ofrece 1080p HD. Los planes Pro y Enterprise incluyen exportación en 4K Ultra HD.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6">
+                ¿Listo para crear tu primer
+                <span class="gradient-text">video musical</span>?
+            </h2>
+            <p class="text-xl text-gray-400 mb-8">
+                Únete a miles de artistas que ya están usando VideoAI Music
+            </p>
+            <button onclick="scrollToCreate()" class="btn-primary px-12 py-5 rounded-full font-semibold text-xl neon-glow">
+                🎬 Comenzar Ahora - Es Gratis
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold gradient-text">VideoAI Music</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Crea videos musicales increíbles con inteligencia artificial. Gratis y sin límites.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Producto</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Características</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Plantillas</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Precios</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">API</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Recursos</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Tutoriales</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Comunidad</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Soporte</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Términos</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Cookies</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors">Licencias</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/10 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 VideoAI Music. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll to create section
+        function scrollToCreate() {
+            document.getElementById('crear').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Style selection
+        document.querySelectorAll('.style-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Duration slider
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        
+        durationSlider.addEventListener('input', function() {
+            durationValue.textContent = this.value + 's';
+        });
+        
+        // File upload
+        const dropZone = document.getElementById('dropZone');
+        const audioFile = document.getElementById('audioFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileDuration = document.getElementById('fileDuration');
+        
+        dropZone.addEventListener('click', () => audioFile.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-purple-500');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-purple-500');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-purple-500');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('audio/')) {
+                handleFile(files[0]);
+            }
+        });
+        
+        audioFile.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            fileName.textContent = file.name;
+            fileDuration.textContent = 'Detectando duración...';
+            fileInfo.classList.remove('hidden');
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                audioContext.decodeAudioData(e.target.result, function(buffer) {
+                    const duration = buffer.duration;
+                    const minutes = Math.floor(duration / 60);
+                    const secs = Math.floor(duration % 60);
+                    fileDuration.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+                }).catch(function() {
+                    fileDuration.textContent = 'No detectada';
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // Generate video
+        async function generateVideo() {
+            const prompt = document.getElementById('videoPrompt').value;
+            const selectedStyle = document.querySelector('.style-option.selected').dataset.style;
+            const duration = durationSlider.value;
+            
+            if (!prompt) {
+                alert('Por favor, describe tu video primero');
+                return;
+            }
+            
+            document.getElementById('placeholderPreview').classList.add('hidden');
+            document.getElementById('loadingPreview').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').textContent = '⏳ Enviando a la IA...';
+            
+            const progressBar = document.getElementById('progressBar');
+            const loadingProgress = document.getElementById('loadingProgress');
+            progressBar.style.width = '5%';
+            loadingProgress.textContent = 'Iniciando...';
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, style: selectedStyle, duration: parseInt(duration) })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al crear la predicción');
+                }
+                
+                progressBar.style.width = '15%';
+                loadingProgress.textContent = 'Video en cola...';
+                document.getElementById('generateBtn').textContent = '⏳ Generando video...';
+                
+                const videoUrl = await pollPrediction(data.id, progressBar, loadingProgress);
+                
+                document.getElementById('loadingPreview').classList.add('hidden');
+                document.getElementById('videoPreview').classList.remove('hidden');
+                document.getElementById('videoInfo').classList.remove('hidden');
+                document.getElementById('outputDuration').textContent = duration + 's';
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = '🚀 Generar Video con IA';
+                
+                const video = document.getElementById('previewVideo');
+                video.src = videoUrl;
+                video.load();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+                document.getElementById('loadingPreview').classList.add('hidden');
+                document.getElementById('placeholderPreview').classList.remove('hidden');
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = '🚀 Generar Video con IA';
+            }
+        }
+        
+        async function pollPrediction(predictionId, progressBar, loadingProgress) {
+            let elapsed = 0;
+            const maxWait = 300;
+            
+            while (elapsed < maxWait) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                elapsed += 2;
+                
+                const progress = Math.min(15 + (elapsed / maxWait) * 80, 95);
+                progressBar.style.width = progress + '%';
+                loadingProgress.textContent = `Generando... (${elapsed}s)`;
+                
+                const response = await fetch('/api/status?id=' + predictionId);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al consultar estado');
+                }
+                
+                if (data.status === 'succeeded') {
+                    progressBar.style.width = '100%';
+                    loadingProgress.textContent = '100%';
+                    
+                    if (data.output && Array.isArray(data.output) && data.output.length > 0) {
+                        return data.output[data.output.length - 1];
+                    } else if (typeof data.output === 'string') {
+                        return data.output;
+                    }
+                    throw new Error('No se obtuvo URL del video');
+                }
+                
+                if (data.status === 'failed' || data.status === 'canceled') {
+                    throw new Error(data.error || 'La generación falló o fue cancelada');
+                }
+            }
+            
+            throw new Error('Tiempo de espera agotado');
+        }
+        
+        // Download video
+        function downloadVideo() {
+            const video = document.getElementById('previewVideo');
+            const link = document.createElement('a');
+            link.href = video.src;
+            link.download = 'mi-video-musical.mp4';
+            link.click();
+        }
+        
+        // Share video
+        function shareVideo() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mi Video Musical AI',
+                    text: 'Mira el video musical que creé con VideoAI Music',
+                    url: window.location.href
+                });
+            } else {
+                // Copy link to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                alert('Enlace copiado al portapapeles');
+            }
+        }
+        
+        // Template selection
+        document.querySelectorAll('#plantillas .card-hover').forEach(template => {
+            template.addEventListener('click', function() {
+                const style = this.querySelector('h4').textContent;
+                const styleMap = {
+                    'Ciudad Nocturna': 'neon',
+                    'Atardecer Onírico': 'cinematic',
+                    'Sueño Abstracto': 'surreal',
+                    'Océano Profundo': 'surreal'
+                };
+                
+                document.querySelectorAll('.style-option').forEach(o => {
+                    o.classList.remove('selected');
+                    if (o.dataset.style === styleMap[style]) {
+                        o.classList.add('selected');
+                    }
+                });
+                
+                document.getElementById('videoPrompt').value = 
+                    `Estilo ${style}: ${this.querySelector('p').textContent}. Video musical profesional con atmósfera emocional.`;
+                
+                scrollToCreate();
+            });
+        });
+    </script>
+</body>
+</html>
+
