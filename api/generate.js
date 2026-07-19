@@ -1,6 +1,6 @@
-const Replicate = require("replicate");
+import Replicate from "replicate";
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -40,13 +40,10 @@ module.exports = async function handler(req, res) {
     const videoDuration = Math.min(Math.max(parseInt(duration) || 5, 1), 16);
 
     const prediction = await replicate.predictions.create({
-      model: "vidu/q3-pro",
+      model: "wavespeedai/wan-2.1-t2v-480p",
       input: {
         prompt: fullPrompt,
-        duration: videoDuration,
-        resolution: "540p",
-        aspect_ratio: "16:9",
-        audio: false,
+        num_frames: Math.round(videoDuration * 8),
       },
     });
 
@@ -56,6 +53,6 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error creating prediction:", error);
-    return res.status(500).json({ error: error.message || "Error al crear la predicción" });
+    return res.status(500).json({ error: error.message || "Error al crear la prediccion" });
   }
-};
+}

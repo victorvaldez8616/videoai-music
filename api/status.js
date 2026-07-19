@@ -1,6 +1,6 @@
-const Replicate = require("replicate");
+import Replicate from "replicate";
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ error: "El parámetro id es requerido" });
+      return res.status(400).json({ error: "El parametro id es requerido" });
     }
 
     const prediction = await replicate.predictions.get(id);
@@ -39,6 +39,6 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error getting prediction:", error);
-    return res.status(500).json({ error: error.message || "Error al obtener la predicción" });
+    return res.status(500).json({ error: error.message || "Error al obtener la prediccion" });
   }
-};
+}
