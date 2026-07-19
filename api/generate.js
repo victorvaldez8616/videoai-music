@@ -1,5 +1,3 @@
-import Replicate from "replicate";
-
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -13,13 +11,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (!process.env.REPLICATE_API_TOKEN) {
-    return res.status(500).json({ error: "REPLICATE_API_TOKEN no configurado" });
-  }
+  const HF_TOKEN = process.env.HF_TOKEN;
 
-  const replicate = new Replicate({
-    auth: process.env.REPLICATE_API_TOKEN,
-  });
+  if (!HF_TOKEN) {
+    return res.status(500).json({ error: "HF_TOKEN no configurado" });
+  }
 
   try {
     const { prompt, style, duration } = req.body;
@@ -29,30 +25,51 @@ export default async function handler(req, res) {
     }
 
     const styleDescriptions = {
-      cinematic: "cinematic lighting, film grain, dramatic composition",
-      neon: "neon lights, cyberpunk aesthetic, glowing colors, night city",
-      anime: "anime style, vibrant colors, detailed animation",
-      surreal: "surreal dreamlike atmosphere, abstract visuals, psychedelic",
+      cinematic: "cinematic lighting, film grain, dramatic composition, photorealistic",
+      neon: "neon lights, cyberpunk aesthetic, glowing purple and blue colors, night city",
+      anime: "anime style, vibrant colors, detailed animation, Studio Ghibli",
+      surreal: "surreal dreamlike atmosphere, abstract visuals, psychedelic colors",
     };
 
-    const fullPrompt = `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, smooth motion`;
+    const fullPrompt = `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, 4k`;
 
-    const videoDuration = Math.min(Math.max(parseInt(duration) || 5, 1), 16);
+    const response = await fetch(
+      "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${HF_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: fullPrompt,
+          parameters: {
+            width: 1024,
+            height: 576,
+            num_inference_steps: 4,
+          },
+        }),
+      }
+    );
 
-    const prediction = await replicate.predictions.create({
-      model: "wavespeedai/wan-2.1-t2v-480p",
-      input: {
-        prompt: fullPrompt,
-        num_frames: Math.round(videoDuration * 8),
-      },
-    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HF API error ${response.status}: ${errorText}`);
+    }
 
-    return res.status(201).json({
-      id: prediction.id,
-      status: prediction.status,
+    const imageBlob = await response.blob();
+    const imageBuffer = Buffer.from(await imageBlob.arrayBuffer());
+    const base64Image = imageBuffer.toString("base64");
+    const dataUrl = `data:image/png;base64,${base64Image}`;
+
+    return res.status(200).json({
+      id: "hf-" + Date.now(),
+      status: "succeeded",
+      output: dataUrl,
+      type: "image",
     });
   } catch (error) {
-    console.error("Error creating prediction:", error);
-    return res.status(500).json({ error: error.message || "Error al crear la prediccion" });
+    console.error("Error:", error);
+    return res.status(500).json({ error: error.message || "Error al generar" });
   }
 }
