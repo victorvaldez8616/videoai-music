@@ -6,6 +6,7 @@
     <title>AI Music Video Generator - Crea Videos Musicales Gratis</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@4.5.15/index.css" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -207,7 +208,7 @@
 </head>
 <body class="text-white">
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/10">
+    <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/10 transition-transform duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-2">
@@ -223,9 +224,15 @@
                     <a href="#crear" class="hover:text-purple-400 transition-colors">Crear</a>
                     <a href="#plantillas" class="hover:text-purple-400 transition-colors">Plantillas</a>
                     <a href="#precios" class="hover:text-purple-400 transition-colors">Precios</a>
-                    <button class="btn-primary px-6 py-2 rounded-full font-semibold">
-                        Comenzar Gratis
-                    </button>
+                    <div id="googleLoginBtn" onclick="triggerGoogleLogin()" class="btn-primary px-6 py-2 rounded-full font-semibold cursor-pointer flex items-center gap-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#fff"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#fff"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/></svg>
+                        Conectar con Google
+                    </div>
+                    <div id="userMenu" class="hidden items-center gap-3">
+                        <img id="userAvatar" class="w-8 h-8 rounded-full border-2 border-purple-500" src="" alt="avatar">
+                        <span id="userName" class="text-sm"></span>
+                        <button onclick="googleLogout()" class="text-sm text-gray-400 hover:text-red-400 transition-colors">Salir</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -905,6 +912,80 @@
                 
                 scrollToCreate();
             });
+        });
+        
+        // Navbar hide on scroll down, show on scroll up
+        let lastScrollY = 0;
+        const mainNav = document.getElementById('mainNav');
+        
+        window.addEventListener('scroll', function() {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > 100) {
+                if (currentScrollY > lastScrollY) {
+                    mainNav.style.transform = 'translateY(-100%)';
+                } else {
+                    mainNav.style.transform = 'translateY(0)';
+                }
+            } else {
+                mainNav.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+        
+        // Google Login
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+        
+        function triggerGoogleLogin() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.prompt();
+            } else {
+                alert('Google Login no disponible. Recarga la pagina.');
+            }
+        }
+        
+        function handleCredentialResponse(response) {
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            
+            document.getElementById('googleLoginBtn').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('userMenu').classList.add('flex');
+            document.getElementById('userName').textContent = payload.name;
+            document.getElementById('userAvatar').src = payload.picture;
+            
+            localStorage.setItem('user', JSON.stringify({
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture
+            }));
+        }
+        
+        function googleLogout() {
+            google.accounts.id.disableAutoSelect();
+            localStorage.removeItem('user');
+            document.getElementById('googleLoginBtn').classList.remove('hidden');
+            document.getElementById('userMenu').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('flex');
+        }
+        
+        window.addEventListener('load', function() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse
+                });
+            }
+            
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                document.getElementById('googleLoginBtn').classList.add('hidden');
+                document.getElementById('userMenu').classList.remove('hidden');
+                document.getElementById('userMenu').classList.add('flex');
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userAvatar').src = user.picture;
+            }
         });
     </script>
 </body>
