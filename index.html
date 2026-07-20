@@ -92,8 +92,22 @@
             background: rgba(139, 92, 246, 0.2);
         }
         
-        #videoPrompt::placeholder {
+        input, textarea, select {
+            color: #ffffff;
+        }
+        
+        input::placeholder, textarea::placeholder {
             color: rgba(255, 255, 255, 0.4);
+        }
+        
+        #videoPrompt {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        
+        #videoPrompt::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+            -webkit-text-fill-color: rgba(255, 255, 255, 0.4) !important;
         }
         
         .duration-slider::-webkit-slider-thumb {
