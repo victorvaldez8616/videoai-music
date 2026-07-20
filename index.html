@@ -94,10 +94,18 @@
         
         input, textarea, select {
             color: #ffffff;
+            background-color: #1a1a3e !important;
+            border: 2px solid #8b5cf6 !important;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #06b6d4 !important;
+            outline: none;
         }
         
         input::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.5) !important;
+            -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
         }
         
         #videoPrompt {
@@ -331,7 +339,7 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium mb-2">2. Describe Tu Video</label>
                         <textarea id="videoPrompt" rows="4" 
-                                  class="w-full bg-black/30 border border-white/20 rounded-xl p-4 text-white focus:border-purple-500 focus:outline-none transition-colors"
+                                  class="w-full rounded-xl p-4 focus:outline-none transition-colors"
                                   placeholder="Ej: Un artista caminando por una calle nocturna con luces de neón, burbujas flotando, atmósfera melancólica y soñadora..."></textarea>
                     </div>
                     

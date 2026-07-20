@@ -11,59 +11,39 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const HF_TOKEN = process.env.HF_TOKEN;
-
-  if (!HF_TOKEN) {
-    return res.status(500).json({ error: "HF_TOKEN no configurado" });
-  }
-
   try {
-    const { prompt, style, duration } = req.body;
+    const { prompt, style } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: "El prompt es requerido" });
     }
 
     const styleDescriptions = {
-      cinematic: "cinematic lighting, film grain, dramatic composition, photorealistic",
-      neon: "neon lights, cyberpunk aesthetic, glowing purple and blue colors, night city",
-      anime: "anime style, vibrant colors, detailed animation, Studio Ghibli",
-      surreal: "surreal dreamlike atmosphere, abstract visuals, psychedelic colors",
+      cinematic: "cinematic lighting, film grain, dramatic composition, photorealistic, movie scene",
+      neon: "neon lights, cyberpunk aesthetic, glowing purple blue colors, night city, vaporwave",
+      anime: "anime style, vibrant colors, detailed animation, Studio Ghibli style",
+      surreal: "surreal dreamlike atmosphere, abstract visuals, psychedelic colors, Salvador Dali style",
     };
 
-    const fullPrompt = `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, 4k`;
-
-    const response = await fetch(
-      "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${HF_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: fullPrompt,
-          parameters: {
-            width: 1024,
-            height: 576,
-            num_inference_steps: 4,
-          },
-        }),
-      }
+    const fullPrompt = encodeURIComponent(
+      `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, 4k, masterpiece`
     );
 
+    const seed = Math.floor(Math.random() * 999999);
+    const imageUrl = `https://image.pollinations.ai/prompt/${fullPrompt}?width=1024&height=576&nologo=true&seed=${seed}`;
+
+    const response = await fetch(imageUrl);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HF API error ${response.status}: ${errorText}`);
+      throw new Error(`Error generating image: ${response.status}`);
     }
 
-    const imageBlob = await response.blob();
-    const imageBuffer = Buffer.from(await imageBlob.arrayBuffer());
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
     const base64Image = imageBuffer.toString("base64");
-    const dataUrl = `data:image/png;base64,${base64Image}`;
+    const dataUrl = `data:image/jpeg;base64,${base64Image}`;
 
     return res.status(200).json({
-      id: "hf-" + Date.now(),
+      id: "gen-" + Date.now(),
       status: "succeeded",
       output: dataUrl,
       type: "image",
