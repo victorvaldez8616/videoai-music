@@ -25,27 +25,21 @@ export default async function handler(req, res) {
       surreal: "surreal dreamlike atmosphere, abstract visuals, psychedelic colors, Salvador Dali style",
     };
 
-    const fullPrompt = encodeURIComponent(
-      `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, 4k, masterpiece`
-    );
+    const fullPrompt = `${prompt}, ${styleDescriptions[style] || ""}, music video, professional, high quality, 4k, masterpiece`;
 
+    const encodedPrompt = encodeURIComponent(fullPrompt);
     const seed = Math.floor(Math.random() * 999999);
-    const imageUrl = `https://image.pollinations.ai/prompt/${fullPrompt}?width=1024&height=576&nologo=true&seed=${seed}`;
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=576&nologo=true&seed=${seed}`;
 
-    const response = await fetch(imageUrl);
-
-    if (!response.ok) {
-      throw new Error(`Error generating image: ${response.status}`);
+    const testResponse = await fetch(imageUrl, { method: "HEAD" });
+    if (!testResponse.ok) {
+      throw new Error("Error generando imagen");
     }
-
-    const imageBuffer = Buffer.from(await response.arrayBuffer());
-    const base64Image = imageBuffer.toString("base64");
-    const dataUrl = `data:image/jpeg;base64,${base64Image}`;
 
     return res.status(200).json({
       id: "gen-" + Date.now(),
       status: "succeeded",
-      output: dataUrl,
+      output: imageUrl,
       type: "image",
     });
   } catch (error) {
