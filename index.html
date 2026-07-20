@@ -99,6 +99,11 @@
             border: 2px solid #8b5cf6 !important;
         }
         
+        select option {
+            background-color: #1a1a3e;
+            color: #ffffff;
+        }
+        
         input:focus, textarea:focus, select:focus {
             border-color: #06b6d4 !important;
             outline: none;
@@ -222,6 +227,7 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#inicio" class="hover:text-purple-400 transition-colors">Inicio</a>
                     <a href="#crear" class="hover:text-purple-400 transition-colors">Crear</a>
+                    <a href="#clonar" class="hover:text-purple-400 transition-colors">Clonar</a>
                     <a href="#plantillas" class="hover:text-purple-400 transition-colors">Plantillas</a>
                     <a href="#precios" class="hover:text-purple-400 transition-colors">Precios</a>
                     <div id="googleLoginBtn" onclick="triggerGoogleLogin()" class="btn-primary px-6 py-2 rounded-full font-semibold cursor-pointer flex items-center gap-2">
@@ -420,8 +426,18 @@
                         </div>
                         
                         <div id="videoPreview" class="hidden absolute inset-0">
-                            <div id="kenBurnsContainer" class="w-full h-full overflow-hidden">
-                                <img id="generatedImage" class="w-full h-full object-cover" src="" alt="AI Generated">
+                            <div id="kenBurnsContainer" class="w-full h-full overflow-hidden relative">
+                                <img id="generatedImage" class="w-full h-full object-cover" src="" alt="AI Generated" 
+                                     onload="this.style.opacity=1" 
+                                     onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full\'><p class=\'text-red-400\'>Error cargando imagen</p></div>'"
+                                     style="opacity:0; transition: opacity 0.5s ease;">
+                                <div id="imageLoader" class="absolute inset-0 flex items-center justify-center bg-black/60">
+                                    <div class="text-center">
+                                        <div class="loading-spinner mx-auto mb-3"></div>
+                                        <p class="text-purple-400 text-sm">Generando imagen con IA...</p>
+                                        <p class="text-gray-500 text-xs mt-1">Esto puede tomar 10-30 segundos</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -498,6 +514,153 @@
                     <div class="p-4">
                         <h4 class="font-semibold">Océano Profundo</h4>
                         <p class="text-sm text-gray-400">Burbujas y profundidad</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clone Viral Videos Section -->
+    <section id="clonar" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                Clona Videos <span class="gradient-text">Virales con IA</span>
+            </h2>
+            <p class="text-center text-gray-400 mb-12">Describe un video viral y la IA creara uno similar para ti</p>
+            
+            <div class="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <!-- Viral Examples -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold mb-4">Videos en Tendencia</h3>
+                    
+                    <div class="viral-card bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:border-purple-500 transition-all" 
+                         onclick="cloneViral('TikTok dance challenge, colorful lights, neon dance floor, energetic movements, slow motion effects, vibrant particles floating')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-2xl flex-shrink-0">💃</div>
+                            <div>
+                                <h4 class="font-semibold">TikTok Dance Challenge</h4>
+                                <p class="text-sm text-gray-400">Luces de neón, baile energetico, particulas flotantes</p>
+                                <span class="text-xs text-purple-400">2.5M vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="viral-card bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:border-purple-500 transition-all"
+                         onclick="cloneViral('Aesthetic bedroom with LED lights, lo-fi hip hop vibe, cozy atmosphere, rain on window, soft warm lighting, anime style')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-2xl flex-shrink-0">🎵</div>
+                            <div>
+                                <h4 class="font-semibold">Lo-fi Aesthetic</h4>
+                                <p class="text-sm text-gray-400">Luces LED, ambiente cozy, lluvia, estilo anime</p>
+                                <span class="text-xs text-purple-400">1.8M vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="viral-card bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:border-purple-500 transition-all"
+                         onclick="cloneViral('Cyberpunk city driving at night, neon reflections on wet streets, synthwave colors, retro futuristic cars, rain, cinematic')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-2xl flex-shrink-0">🚗</div>
+                            <div>
+                                <h4 class="font-semibold">Night Drive Cyberpunk</h4>
+                                <p class="text-sm text-gray-400">Conduccion nocturna, neón, lluvia, synthwave</p>
+                                <span class="text-xs text-purple-400">3.2M vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="viral-card bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:border-purple-500 transition-all"
+                         onclick="cloneViral('Ocean waves at sunset, golden hour light, dreamy clouds, ethereal atmosphere, silhouette of person standing on cliff, cinematic slow motion')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-500 flex items-center justify-center text-2xl flex-shrink-0">🌅</div>
+                            <div>
+                                <h4 class="font-semibold">Sunset Dreamy</h4>
+                                <p class="text-sm text-gray-400">Oceano al atardecer, atmosfera eterea, cinematico</p>
+                                <span class="text-xs text-purple-400">4.1M vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="viral-card bg-white/5 rounded-xl p-4 border border-white/10 cursor-pointer hover:border-purple-500 transition-all"
+                         onclick="cloneViral('Anime girl walking through cherry blossom petals, Studio Ghibli style, magical forest, soft pastel colors, wind blowing petals, dreamy music video')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center text-2xl flex-shrink-0">🌸</div>
+                            <div>
+                                <h4 class="font-semibold">Anime Cherry Blossom</h4>
+                                <p class="text-sm text-gray-400">Estilo Ghibli, flores de cerezo, bosque magico</p>
+                                <span class="text-xs text-purple-400">5.7M vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Clone Panel -->
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10">
+                    <h3 class="text-xl font-semibold mb-4">O describe tu propio video viral</h3>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Describe el video viral que quieres clonar</label>
+                        <textarea id="viralPrompt" rows="5" 
+                                  class="w-full rounded-xl p-4 focus:outline-none transition-colors"
+                                  placeholder="Ej: Un tipo bailando en la calle con luces de neón alrededor, efecto slow motion, particulas flotantes, colores vibrantes..."></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Elige la plataforma</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="platform-option selected bg-white/5 rounded-xl p-3 cursor-pointer text-center border-2 border-purple-500" data-platform="tiktok" onclick="selectPlatform(this)">
+                                <div class="text-2xl mb-1">📱</div>
+                                <div class="text-xs">TikTok</div>
+                            </div>
+                            <div class="platform-option bg-white/5 rounded-xl p-3 cursor-pointer text-center border-2 border-transparent" data-platform="instagram" onclick="selectPlatform(this)">
+                                <div class="text-2xl mb-1">📸</div>
+                                <div class="text-xs">Instagram</div>
+                            </div>
+                            <div class="platform-option bg-white/5 rounded-xl p-3 cursor-pointer text-center border-2 border-transparent" data-platform="youtube" onclick="selectPlatform(this)">
+                                <div class="text-2xl mb-1">▶️</div>
+                                <div class="text-xs">YouTube</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Estilo visual</label>
+                        <select id="viralStyle" class="w-full rounded-xl p-4 focus:outline-none">
+                            <option value="cinematic">Cinematografico</option>
+                            <option value="neon">Neon / Cyberpunk</option>
+                            <option value="anime">Anime</option>
+                            <option value="surreal">Surrealista</option>
+                            <option value="retro">Retro / Vintage</option>
+                            <option value="minimal">Minimalista</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="cloneVideo()" id="cloneBtn" class="w-full btn-primary py-4 rounded-xl font-semibold text-lg neon-glow">
+                        🔥 Clonar Video Viral con IA
+                    </button>
+                    
+                    <div id="clonePreview" class="hidden mt-6 rounded-xl overflow-hidden aspect-video relative bg-black/40">
+                        <div id="cloneLoader" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="loading-spinner mx-auto mb-3"></div>
+                                <p class="text-purple-400 text-sm">Clonando video viral...</p>
+                            </div>
+                        </div>
+                        <img id="cloneImage" class="w-full h-full object-cover" src="" alt="Cloned viral video" 
+                             style="opacity:0; transition: opacity 0.5s ease;"
+                             onload="this.style.opacity=1; document.getElementById('cloneLoader').classList.add('hidden');">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                            <p class="text-sm text-gray-300" id="cloneDescription"></p>
+                        </div>
+                    </div>
+                    
+                    <div id="cloneActions" class="hidden mt-4 flex gap-3">
+                        <button onclick="downloadClone()" class="flex-1 btn-primary py-3 rounded-xl font-semibold">
+                            📥 Descargar
+                        </button>
+                        <button onclick="useCloneInCreator()" class="flex-1 py-3 rounded-xl font-semibold border-2 border-purple-500 hover:bg-purple-500/20 transition-all">
+                            🎬 Usar en Creator
+                        </button>
                     </div>
                 </div>
             </div>
@@ -835,7 +998,20 @@
                     document.getElementById('generateBtn').textContent = '🚀 Generar Video con IA';
                     
                     const img = document.getElementById('generatedImage');
+                    const loader = document.getElementById('imageLoader');
+                    
+                    loader.classList.remove('hidden');
+                    img.style.opacity = '0';
                     img.src = data.output;
+                    
+                    img.onload = function() {
+                        img.style.opacity = '1';
+                        loader.classList.add('hidden');
+                    };
+                    
+                    img.onerror = function() {
+                        loader.innerHTML = '<p class="text-red-400 text-sm text-center">Error cargando imagen.<br>Intenta de nuevo.</p>';
+                    };
                     
                     const styleNames = {
                         cinematic: 'Cinematográfico',
@@ -846,7 +1022,7 @@
                     document.getElementById('outputStyle').textContent = styleNames[selectedStyle] || selectedStyle;
                     
                     window.currentImageData = data.output;
-                }, 500);
+                }, 300);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -889,7 +1065,93 @@
             }
         }
         
-        // Template selection
+        // Platform selection for viral clone
+        function selectPlatform(el) {
+            document.querySelectorAll('.platform-option').forEach(o => {
+                o.classList.remove('selected');
+                o.style.borderColor = 'transparent';
+            });
+            el.classList.add('selected');
+            el.style.borderColor = '#8b5cf6';
+        }
+        
+        // Clone viral video
+        async function cloneVideo() {
+            const prompt = document.getElementById('viralPrompt').value;
+            if (!prompt) {
+                alert('Describe el video viral que quieres clonar');
+                return;
+            }
+            await generateCloneImage(prompt);
+        }
+        
+        async function cloneViral(prompt) {
+            document.getElementById('viralPrompt').value = prompt;
+            await generateCloneImage(prompt);
+        }
+        
+        async function generateCloneImage(prompt) {
+            const style = document.getElementById('viralStyle').value;
+            const platform = document.querySelector('.platform-option.selected')?.dataset.platform || 'tiktok';
+            
+            const platformFormats = {
+                tiktok: 'vertical format 9:16, mobile first, short form video style',
+                instagram: 'square format 1:1, aesthetic, instagram reels style',
+                youtube: 'widescreen 16:9, cinematic, youtube music video style'
+            };
+            
+            const fullPrompt = `${prompt}, ${platformFormats[platform]}, viral video style, trending, high quality, 4k`;
+            
+            document.getElementById('clonePreview').classList.remove('hidden');
+            document.getElementById('cloneLoader').classList.remove('hidden');
+            document.getElementById('cloneActions').classList.add('hidden');
+            document.getElementById('cloneImage').style.opacity = '0';
+            document.getElementById('cloneBtn').disabled = true;
+            document.getElementById('cloneBtn').textContent = '⏳ Clonando...';
+            
+            try {
+                const encodedPrompt = encodeURIComponent(fullPrompt);
+                const seed = Math.floor(Math.random() * 999999);
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=576&nologo=true&seed=${seed}`;
+                
+                const img = document.getElementById('cloneImage');
+                img.src = imageUrl;
+                
+                img.onload = function() {
+                    img.style.opacity = '1';
+                    document.getElementById('cloneLoader').classList.add('hidden');
+                    document.getElementById('cloneActions').classList.remove('hidden');
+                    document.getElementById('cloneDescription').textContent = prompt;
+                    document.getElementById('cloneBtn').disabled = false;
+                    document.getElementById('cloneBtn').textContent = '🔥 Clonar Video Viral con IA';
+                    window.currentCloneData = imageUrl;
+                };
+                
+                img.onerror = function() {
+                    document.getElementById('cloneLoader').innerHTML = '<p class="text-red-400 text-sm text-center">Error. Intenta de nuevo.</p>';
+                    document.getElementById('cloneBtn').disabled = false;
+                    document.getElementById('cloneBtn').textContent = '🔥 Clonar Video Viral con IA';
+                };
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('cloneBtn').disabled = false;
+                document.getElementById('cloneBtn').textContent = '🔥 Clonar Video Viral con IA';
+            }
+        }
+        
+        function downloadClone() {
+            if (!window.currentCloneData) return;
+            const link = document.createElement('a');
+            link.href = window.currentCloneData;
+            link.download = 'video-viral-clonado.png';
+            link.click();
+        }
+        
+        function useCloneInCreator() {
+            const desc = document.getElementById('cloneDescription').textContent;
+            document.getElementById('videoPrompt').value = desc;
+            scrollToCreate();
+        }
         document.querySelectorAll('#plantillas .card-hover').forEach(template => {
             template.addEventListener('click', function() {
                 const style = this.querySelector('h4').textContent;
