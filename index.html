@@ -92,6 +92,10 @@
             background: rgba(139, 92, 246, 0.2);
         }
         
+        #videoPrompt::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
         .duration-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -313,7 +317,7 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium mb-2">2. Describe Tu Video</label>
                         <textarea id="videoPrompt" rows="4" 
-                                  class="w-full bg-black/30 border border-white/20 rounded-xl p-4 focus:border-purple-500 focus:outline-none transition-colors"
+                                  class="w-full bg-black/30 border border-white/20 rounded-xl p-4 text-white focus:border-purple-500 focus:outline-none transition-colors"
                                   placeholder="Ej: Un artista caminando por una calle nocturna con luces de neón, burbujas flotando, atmósfera melancólica y soñadora..."></textarea>
                     </div>
                     
